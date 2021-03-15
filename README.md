@@ -1,0 +1,2 @@
+# OpenwrtCompileScript
+OpenwrtCompileScript openwrt.sh
