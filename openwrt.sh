@@ -9,7 +9,7 @@
 
 ### 变量预设
 url=http://www.guyezi.com
-O_Sou_URL=https://git.openwrt.org/openwrt/openwrt.git
+O_Sou_URL='https://git.openwrt.org/openwrt/openwrt.git'
 
 version="21.3"
 SF="Script_File"
@@ -103,7 +103,7 @@ ls_file_luci(){
 	if [[ -e $HOME/$OW/$SF/tmp ]]; then
 		echo "$file" > $HOME/$OW/$SF/tmp/you_file
 	else
-		mkdir -p $HOME/$OW/$SF/tmp	
+		mkdir -p $HOME/$OW/$SF/tmp
 	fi
 }
 
@@ -192,7 +192,7 @@ other() {
 		update_lean_package
 		;;
 		4)
-		download_package		
+		download_package
 		;;
 		0)
 		main_interface
@@ -210,11 +210,11 @@ dl_other() {
 		echo ""
 		echo -e ">>$green dl已经单独下载完成$white"
 	else
-		clear	
+		clear
 		echo -e "$red dl没有下载成功,重新执行下载代码 $white" && Time
 		dl_other
 	fi
-	 
+
 }
 
 update_lean_package() {
@@ -230,18 +230,18 @@ update_lean_package() {
 }
 
 download_package() {
-	ls_file_luci 
+	ls_file_luci
 	if [[ -e package/Extra-plugin ]]; then
-		echo ""	
+		echo ""
 	else
 		mkdir $HOME/$OW/$file/lede/package/Extra-plugin
 	fi
 	download_package_luci
-	
+
 }
 
 download_package2() {
-	cd $HOME/$OW/$file/lede 
+	cd $HOME/$OW/$file/lede
 	rm -rf ./tmp
 	display_git_log_luci
 	update_feeds
@@ -378,12 +378,12 @@ download_package_customize() {
 	if [[ $? -eq 0 ]]; then
 		cd $HOME/$OW/$file/lede
 	else
-		clear	
+		clear
 		echo -e "没有下载成功或者插件已经存在，请检查$red package/Extra-plugin $white里面是否已经存在" && Time
 		download_package_customize
 	fi
 	download_package_customize_Decide
-	
+
 }
 
 download_package_customize_Decide() {
@@ -436,10 +436,10 @@ elif [[ $DW =~ $DWOS ]]; then
 	findutils gnutar mpfr libmpc gcc49
 	echo "搭建环境完成" && clear && description_if
 elif [[ $CT =~ $CTOS ]];then
-	echo -e "CentOS" && sudo yum update && 
+	echo -e "CentOS" && sudo yum update &&
 	echo "搭建环境完成" && clear && description_if
 elif [[ $UB =~ $UBOS ]];then
-	echo "Ubuntu" && ubuntu  
+	echo "Ubuntu" && ubuntu
 	echo "搭建环境完成" && description_if
 else
 	echo $OS && clear && description_if
@@ -512,7 +512,6 @@ description_if(){
 		else
 			echo "系统变量已经添加"
 		fi
-
 	fi
 
 	if [[ -e $HOME/$OW/$SF/$OCS ]]; then
@@ -525,6 +524,16 @@ description_if(){
 		rm -rf `pwd`/$OCS
 		cd $HOME/$OW/$SF/$OCS
 		bash openwrt.sh
+	fi
+
+	clear
+	if [[ -e $HOME/$OW/$SF/description ]]; then
+		self_test		
+		menu
+	else
+		clear
+		self_test
+		menu
 	fi
 }
 
@@ -686,14 +695,13 @@ create_file() {
 
 	if [[ -e $HOME/$OW/$file ]]; then
 		clear && echo "文件夹已存在，请重新输入文件夹名" && Time
-		create_file
-
+		cd $HOME/$OW/$file && clear 
+		echo "$file" > $HOME/$OW/$SF/tmp/you_file
 	 else
 		echo "开始创建文件夹"
 			mkdir $HOME/$OW/$file
 			cd $HOME/$OW/$file  && clear
 			echo "$file" > $HOME/$OW/$SF/tmp/you_file
-			source_download_select
 	 fi
 }
 
@@ -730,7 +738,6 @@ self_test() {
 		Root_run=`echo -e "$green非root运行$white"`
 	fi
 
-	
 	clear
 	echo "稍等一下，正在取回远端脚本源码，用于比较现在脚本源码，速度看你网络"
 	cd && cd $HOME/$OW/$SF/$OCS
@@ -746,8 +753,8 @@ self_test() {
 	if [[ "$git_branch" == "落后" ]]; then
 		Script_status=`echo -e "$red建议更新$white"`
 	else
-		Script_status=`echo -e "$green最新$white"`		
-	fi	
+		Script_status=`echo -e "$green最新$white"`
+	fi
 
 	echo "	      	-------------------------------------------"
 	echo "	      	  	【  Script Self-Test Program  】"
@@ -770,6 +777,11 @@ self_test() {
 	read a
 }
 
+to_file(){
+	if [[ -e $HOME/$OW/$file ]]; then
+		cd $HOME/$OW/$file/lede/
+}
+
 Upx_source_setting(){
 	Upx_compile='$(curdir)/upx/compile := $(curdir)/ucl/compile'
 	if [[ $(grep -o "upx" tools/Makefile | wc -l)  == "1" ]]; then
@@ -779,7 +791,7 @@ Upx_source_setting(){
 			sed -i 's#zlib zstd#zlib zstd ucl upx#g' $HOME/$OW/$file/lede/tools/Makefile 
 			#sed -i '40i\\$Upx_compile' $HOME/$OW/$file/lede/tools/Makefile
 			echo $Upx_compile | sed -i "40i\\$Upx_compile" $HOME/$OW/$file/lede/tools/Makefile
-			cat $HOME/$OW/$file/lede/tools/Makefile | | grep -n $Upx_compile
+			cat tools/Makefile | grep -n $Upx_compile
 			git clone https://github.com/guyezi/openwrt-upx.git  $HOME/$OW/$file/lede/tools/upx
 			git clone https://github.com/guyezi/openwrt-ucl.git  $HOME/$OW/$file/lede/tools/ucl
 		 fi
@@ -809,26 +821,24 @@ echo "-------------------------------------"
 echo ""
 if [[ $(grep -o "192.168.1.1" package/base-files/files/bin/config_generate | wc -l)  == "1" ]]; then
 	while :
-	do		
-read -p "请输入修改网关的IP地址:" openwrt_ip
+	do
+	read -p "请输入修改网关的IP地址:" openwrt_ip
 	if [ -z $m ] && [ $n -eq 4 ] && [ -n $n1 ] && [ -n $n2 ] && [ -n $n3 ] && [ -n $n4 ] && [ -eq $q ]; then
 			if [ $q =~ 'q' ]; then
 				source_openwrt_setting
-			fi
-		else
-			if [ $n1 -ge 0 ] && [ $n1 -le 255 ] && [ $n2 -ge 0 ] && [ $n2 -le 255 ] && [ $n3 -ge 0 ] && [ $n3 -le 255 ] && [ $n4 -ge 0 ] && [ $n4 -le 255 ]; then
-				echo -e "${openwrt_ip} ip正确" && sed -i 's/192.168.1.1/${openwrt_ip}/g' $HOME/$OW/$file/lede/package/base-files/files/bin/config_generate
-				cat $HOME/$OW/$file/lede/package/base-files/files/bin/config_generate | grep -n  ${openwrt_ip} && echo "默认网关IP以改为 ${openwrt_ip}"
-				source_openwrt_setting
 			else
+				if [ $n1 -ge 0 ] && [ $n1 -le 255 ] && [ $n2 -ge 0 ] && [ $n2 -le 255 ] && [ $n3 -ge 0 ] && [ $n3 -le 255 ] && [ $n4 -ge 0 ] && [ $n4 -le 255 ]; then
+					echo -e "${openwrt_ip} ip正确" && sed -i 's/192.168.1.1/${openwrt_ip}/g' $HOME/$OW/$file/lede/package/base-files/files/bin/config_generate
+					cat $HOME/$OW/$file/lede/package/base-files/files/bin/config_generate | grep -n  ${openwrt_ip} && echo "默认网关IP以改为 ${openwrt_ip}"
+					source_openwrt_setting
+				else
 				echo "你输入的ip错误，请重新输入"
+				fi
 			fi
-		fi
-	else
 		echo "你输入的ip错误，请重新输入"
 	fi
-
 done
+fi
 }
 
 
@@ -932,7 +942,7 @@ read -p "输入选择：" Source_openwrt_setting_select
 	;;
 esac
 }
-}
+
 
 ###### 准备下载源码 ############
 source_download_openwrt() {
@@ -976,31 +986,45 @@ source_download_openwrt() {
 		read  -p "请输入你要下载的源代码:" Source_openwrt_select
 			case "$Source_openwrt_select" in
 				1)
+				create_file
 				git clone https://github.com/coolsnowwolf/lede.git lede
+				to_file
 				source_openwrt_setting
 				;;
 				2)
+				create_file
 				git clone -b 19.07 https://github.com/Lienol/openwrt.git lede
+				to_file
 				source_openwrt_setting
 				;;
 				3)
+				create_file
 				git clone -b 21.02 https://github.com/Lienol/openwrt.git lede
+				to_file
 				source_openwrt_setting
 				;;
 				4)
-				git clone -b lede-17.01 '$O_Sou_URL' lede
+				create_file
+				git clone -b lede-17.01 $O_Sou_URL lede
+				to_file
 				source_openwrt_setting
 				;;
 				5)
-				git clone -b openwrt-18.06 '$O_Sou_URL' lede
+				create_file
+				git clone -b openwrt-18.06 $O_Sou_URL lede
+				to_file
 				source_openwrt_setting
 				;;
 				6)
-				git clone -b openwrt-19.07 '$O_Sou_URL' lede
+				create_file
+				git clone -b openwrt-19.07 $O_Sou_URL lede
+				to_file
 				source_openwrt_setting
 				;;
 				7)
-				git clone -b openwrt-19.7.7 '$O_Sou_URL' lede
+				create_file
+				git clone -b openwrt-19.7.7 $O_Sou_URL lede
+				to_file
 				source_openwrt_setting
 				;;
 				U)
@@ -1021,7 +1045,6 @@ source_download_openwrt() {
 				 ;;
 			esac
 		}
-    
 source_download_openwrt1() {
 	clear
 	printf "
@@ -1054,19 +1077,27 @@ source_download_openwrt1() {
 		read  -p "请输入你要下载的源代码:" Download_source_openwrt_1
 			case "$Download_source_openwrt_1" in
 				1)
-				git clone -b openwrt-21.02 '$O_Sou_URL' lede
+				create_file
+				git clone -b openwrt-21.02 $O_Sou_URL lede
+				to_file
 				source_openwrt_setting
 				;;
 				2)
-				git clone -b openwrt-21.02 '$O_Sou_URL' lede
-				source_openwrt_setting
-				;;				
-				8)
-				git clone -b openwrt-19.07.7 '$O_Sou_URL' lede
+				create_file
+				git clone -b openwrt-21.02 $O_Sou_URL lede
+				to_file
 				source_openwrt_setting
 				;;
-				9)
-				git clone -b openwrt-21.02 '$O_Sou_URL' lede
+				3)
+				create_file
+				git clone -b openwrt-19.07.7 $O_Sou_URL lede
+				to_file
+				source_openwrt_setting
+				;;
+				4)
+				create_file
+				git clone -b openwrt-21.02 $O_Sou_URL lede
+				to_file
 				source_openwrt_setting
 				;;
 				U)
@@ -1085,7 +1116,7 @@ source_download_openwrt1() {
 				*)
 				clear && echo  "请输入正确的数字（1-6，0）" && Time
 				source_download_openwrt1
-				 ;;
+				;;
 			esac
 }
 
@@ -1094,6 +1125,7 @@ source_download_openwrt1() {
 
 ##主菜单
 function menu(){
+	clear
 printf  "
 #############################################################
 #	Openwrt Compile Script for CentOS/RedHat 6+ Debian 7+	#
@@ -1115,9 +1147,17 @@ printf  "
 "
 read -p "请输入您的选择: " choice
 	case $choice in
-	1)
-	install
-	clear
+	1)	
+	if [[ -e $HOME/$OW/$SF/$OCS ]]; then
+		echo "存在"
+	else 
+		cd $HOME/$OW/$SF/
+        git clone https://github.com/openwrtcompileshell/OpenwrtCompileScript.git
+		cd 
+		rm -rf `pwd`/$OCS
+		cd $HOME/$OW/$SF/$OCS
+		bash openwrt.sh install
+	fi
 	;;
 	2)
 	source_download_openwrt
